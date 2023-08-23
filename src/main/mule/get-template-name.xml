@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:os="http://www.mulesoft.org/schema/mule/os"
+	xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
+	<flow name="get:\template\(name):main-config" doc:id="f7b3b7d8-d061-4e22-944e-844f8f2cf87b" >
+		<logger level="INFO" doc:name="Start Retriving Template" doc:id="6d01f0ad-fffd-480a-b9e3-a9876f8429e9" message='#["Start Retriving Template"]'/>
+		<set-variable value="#[attributes.uriParams.name]" doc:name="Uri Param" doc:id="5e69935b-7e57-41af-ad18-04db65f6214a" variableName="uriParamName"/>
+		<os:contains doc:name="Exists Template in OS" doc:id="fb5ccd3f-f84a-464d-a9cc-171b25a6d692" key="#[vars.uriParamName]" objectStore="Template_OS"/>
+		<validation:is-true doc:name="Template Exists" doc:id="8ca8f65a-9a56-471b-9abe-b5b84244e76f" expression="#[payload]"/>
+		<os:retrieve doc:name="Retrieve template by name" doc:id="961f9ebf-10f4-404a-b38c-af7d8dacfed5" key="#[vars.uriParamName]" objectStore="Template_OS"/>
+		<ee:transform doc:name="Process Response" doc:id="4056dd01-b551-4c56-ba29-71a9eb458325" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"name": vars.uriParamName,
+	"content": payload default ""
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="End Retriving Template" doc:id="7ba9922a-3f01-4c42-aa9a-284d34f63c04" message='#["End Retriving Template"]'/>
+		<error-handler >
+		
+		<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="21d756f6-5451-49d7-8193-bcd7a313b631" type="VALIDATION:INVALID_BOOLEAN">
+				<logger level="ERROR" doc:name="Template Is Blank" doc:id="ddec33eb-73c7-4ce7-9c4b-c43c750f9486" message='#[error.detailedDescription default "UNKNOWN"]' />
+				<ee:transform doc:name="Set Error 404" doc:id="78cd3594-a7a5-4ece-a340-9612183f82e7">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+modules::Invoice::setErrorMessage(
+	404,
+	"Template Not Exists",
+	"Template Not Exists", 
+	"", 
+	true)]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<set-variable value="404" doc:name="Set HTTP 404" doc:id="92267daf-7c09-4c6f-bcca-1dcc20ebf986" variableName="httpStatus"/>
+			
+</on-error-continue>
+			
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="80d7f06a-2a87-41bd-bf1a-2e0d77ed0023" type="ANY">
+				<logger level="ERROR" doc:name="Generic Error" doc:id="60e21613-0041-43c2-afd4-aaf6dc64ac98" message='#[error.detailedDescription default "UNKNOWN"]'/>
+				<ee:transform doc:name="Internal Error" doc:id="60b1b3ac-b32b-43a3-ab32-17f6b98f0243" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+modules::Invoice::setErrorMessage(
+	500,
+	"Internal Error",
+	error.detailedDescription, 
+	"", 
+	true)]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-propagate>
+			
+		</error-handler>
+	</flow>
+</mule>

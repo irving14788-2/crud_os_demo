@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:os="http://www.mulesoft.org/schema/mule/os"
+	xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
+	<flow name="put:\template:main-config" doc:id="632c0b0d-2aa4-4685-9275-0794496e7bf1" >
+		<logger level="INFO" doc:name="Start Upserting Template" doc:id="9bdf107b-c21c-42fe-826b-eee19f3c4419" message='#["Start Upserting Template"]'/>
+		<set-variable value="#[payload]" doc:name="Original Payload" doc:id="34120606-1b32-4ae5-8a47-31567e0c0496" variableName="originalPayload"/>
+		<os:contains doc:name="Exists Template in OS" doc:id="997dd822-0a48-4e62-9a10-3b73b5288415" key="#[payload.name]" objectStore="Template_OS"/>
+		<choice doc:name="Choice" doc:id="e249229c-33a0-475b-990e-04b0b1d842c5">
+			<when expression="#[payload == true]">
+			<logger level="INFO" doc:name="Remove template" doc:id="4fdca113-a1cd-43d9-87b3-a89db9b90880" message='"Remove template"'/>
+				<os:remove doc:name="Remove Template" doc:id="c444f5eb-11bb-4e32-a5ba-bf034be7740b" objectStore="Template_OS" key="#[vars.originalPayload.name]"/>
+			</when>
+			<otherwise>
+				<logger level="INFO" doc:name="Insert template" doc:id="0d13d618-ce00-42b1-919b-f1c1fcb56894" message='"Template not exists "' />
+			</otherwise>
+		</choice>
+		<os:store doc:name="Store Template" doc:id="bb2c0749-563f-4942-bb7a-6aa22b3679b0" objectStore="Template_OS" key="#[vars.originalPayload.name]">
+			<os:value ><![CDATA[#[vars.originalPayload.content]]]></os:value>
+		</os:store>
+		<set-variable value="#[204]" doc:name="Set HttpStatus 204" doc:id="4de7ad46-90c2-409e-b0c3-ee1b6dae06a4" variableName="httpStatus"/>
+		<set-payload value="#[null]" doc:name="Set Empty Response" doc:id="4c7975e5-d3f6-4f92-a8d4-febc3dd67781" />
+		<logger level="INFO" doc:name="End Upserting Template" doc:id="c31e7900-ce64-40cc-9bd0-2b7ff40d4e6f" message='#["End Upserting Template"]'/>
+		<error-handler >
+			
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="78636842-8d7b-4fd3-b0e9-5c2d932205a2" type="ANY">
+				<logger level="ERROR" doc:name="Generic Error" doc:id="eec7531b-c20a-464b-8553-87a931867aac" message='#[error.detailedDescription default "UNKNOWN"]'/>
+				
+				<ee:transform doc:name="Set Error" doc:id="03cc05a4-723e-412b-9537-1804608d9633" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+modules::Invoice::setErrorMessage(
+	500,
+	"Internal Error",
+	error.detailedDescription, 
+	"", 
+	true)]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-propagate>
+			
+		
+</error-handler>
+	</flow>
+</mule>

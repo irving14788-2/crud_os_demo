@@ -1,0 +1,93 @@
+#%RAML 1.0
+title: Test application
+
+mediaType: application/json
+
+protocols:
+  - HTTPS
+
+
+version: v1
+
+ 
+types:
+  post-electronic-transfer-request-type: !include data-types/post-electronic-transfer-request-type.raml
+  post-electronic-transfer-response-type: !include data-types/post-electronic-transfer-response-type.raml
+  get-template-response-type: !include data-types/get-template-response-type.raml
+  put-template-request-type: !include data-types/put-template-request-type.raml
+  common-error-response-type: !include data-types/common-error-response-type.raml
+  
+
+/template:
+  get:
+    displayName: Get all template
+    description: Get all template
+    responses:
+      200:
+        body:
+          application/json:
+            type: array
+            items: get-template-response-type
+      500:
+        description:      |
+          Raised when there is an unexpected error encountered when getting the templates
+        body:
+          application/json:
+            type: common-error-response-type
+      
+  put:
+    displayName: Update template
+    description: Upsert template in object store
+    body:
+      application/json:
+        type: put-template-request-type
+    responses:
+      204:
+        description: No Content
+      500:
+        description:      |
+          Raised when there is an unexpected error encountered when upserting the templates
+        body:
+          application/json:
+            type: common-error-response-type
+            
+  /{name}:
+    get:
+      displayName: Get template
+      description: Get template
+      responses:
+        200:
+          body:
+            application/json:
+              type: get-template-response-type
+        404:
+          description:      |
+            There was no template found for the given name
+          body:
+            application/json:
+              type: common-error-response-type
+        500:
+          description:      |
+            Raised when there is an unexpected error encountered when getting the template
+          body:
+            application/json:
+              type: common-error-response-type
+    delete:
+      displayName: Delete template
+      description: Delete template in object store
+      responses:
+        204:
+          description: No Content
+        404:
+          description:      |
+            There was no template found for the given name
+          body:
+            application/json:
+              type: common-error-response-type
+        500:
+          description:      |
+            Raised when there is an unexpected error encountered when deleting the template
+          body:
+            application/json:
+              type: common-error-response-type
+          

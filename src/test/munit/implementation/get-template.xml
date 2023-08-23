@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="get-template.xml" />
+	<munit:before-test name="get-template-before-test" doc:id="c8c2cec0-101c-4e46-a3a6-e83416701561" >
+		<munit-tools:mock-when doc:name="Retrieve all templates" doc:id="142e136d-903f-4606-ac85-8031b25ab0af" processor="os:retrieve-all">
+			<munit-tools:with-attributes >
+				<munit-tools:with-attribute whereValue="Retrieve all templates" attributeName="doc:name" />
+			</munit-tools:with-attributes>
+			<munit-tools:then-return >
+				<munit-tools:payload value="#[modules::GetTemplateTest::responseOS]" />
+			</munit-tools:then-return>
+		</munit-tools:mock-when>
+	</munit:before-test>
+	<munit:test name="get-template-success-test" doc:id="e1267571-3661-4b11-8c73-3e38d3b182e5" >
+		<munit:execution >
+			<flow-ref doc:name="Retrieve Template" doc:id="96f0c583-c795-467d-81fe-a5c08b7245ef" name="get:\template:main-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Valid Response" doc:id="ad10d973-9e90-4fdc-9217-1c81a8983e04" >
+				<munit-tools:that ><![CDATA[#[import * from dw::test::Asserts 
+ ---
+payload must equalTo(modules::GetTemplateTest::responseFlow)]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="get-template-empty-response-test" doc:id="e2379730-7979-4c1b-8e8c-7200c33df90c" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Retrieve all templates" doc:id="92cdc8c9-1085-4192-9cd0-776b436d88eb" processor="os:retrieve-all">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Retrieve all templates" attributeName="doc:name" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[{}]" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Retrieve Template" doc:id="ca29e2eb-797a-445b-9beb-e242382be880" name="get:\template:main-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Valid Response" doc:id="7af7c8cc-9aa3-41cc-91d9-ec99540535d6" >
+				<munit-tools:that ><![CDATA[#[import * from dw::test::Asserts 
+ ---
+payload must equalTo([])]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+
+
+<munit:test name="get-template-error-os-test" doc:id="724ec754-f06b-42e3-8187-ebf7b7b5f169" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Retrieve all templates" doc:id="3dafc4af-f4d8-4da7-8c25-9c934afe355c" processor="os:retrieve-all">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Retrieve all templates" attributeName="doc:name" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="OS:STORE_NOT_AVAILABLE" />
+				</munit-tools:then-return>
+			
+</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<try doc:name="Try" doc:id="d35ea4f5-338a-4d26-98cb-184ca6ba3953" >
+				<flow-ref doc:name="Retrieve Template" doc:id="69a64bb5-aa1b-44fd-99bd-0f2e75ac2cb7" name="get:\template:main-config" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="1dd56295-f054-40f8-9423-ca63d5d7a899" type="ANY"/>
+				</error-handler>
+			</try>
+		
+</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Valid Response" doc:id="0a551ee1-a6e1-4220-aedd-813d62ca055d" >
+				<munit-tools:that ><![CDATA[#[import * from dw::test::Asserts 
+ ---
+payload must equalTo(modules::GetTemplateTest::errorOSTemplate)]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+
+</mule>

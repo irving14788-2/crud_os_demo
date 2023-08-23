@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:os="http://www.mulesoft.org/schema/mule/os"
+	xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
+	<flow name="get:\template:main-config" doc:id="f7b3b7d8-d061-4e22-944e-844f8f2cf87b" >
+		<logger level="INFO" doc:name="Start Retriving Template" doc:id="6d01f0ad-fffd-480a-b9e3-a9876f8429e9" message='#["Start Retriving Template"]'/>
+		<os:retrieve-all doc:name="Retrieve all templates" doc:id="cf9414d8-a98f-46ee-a22d-cf5bf58f5ac0" objectStore="Template_OS"/>
+		<ee:transform doc:name="Process Response" doc:id="4056dd01-b551-4c56-ba29-71a9eb458325" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var keysArray = payload pluck $$
+var valuesArray = payload pluck $
+---
+keysArray map((item,index) ->{
+	"name": item,
+	"content": valuesArray[index]
+})]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="End Retriving Template" doc:id="7ba9922a-3f01-4c42-aa9a-284d34f63c04" message='#["End Retriving Template"]'/>
+		<error-handler >
+			
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="80d7f06a-2a87-41bd-bf1a-2e0d77ed0023" type="ANY">
+				<logger level="ERROR" doc:name="Generic Error" doc:id="60e21613-0041-43c2-afd4-aaf6dc64ac98" message='#[error.detailedDescription default "UNKNOWN"]'/>
+				<ee:transform doc:name="Internal Error" doc:id="60b1b3ac-b32b-43a3-ab32-17f6b98f0243" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+modules::Invoice::setErrorMessage(
+	500,
+	"Internal Error",
+	error.detailedDescription, 
+	"", 
+	true)]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-propagate>
+			
+		</error-handler>
+	</flow>
+</mule>

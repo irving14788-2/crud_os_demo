@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="get-template-name.xml" />
+		<munit:before-test name="get-template-name-before-test" doc:id="efd94790-e55f-4d12-9874-a62b50c2996e" >
+		<munit-tools:mock-when doc:name="Exists Template in OS" doc:id="b2a68b4d-0598-4853-b57e-8e897fcb07d1" processor="os:contains">
+			<munit-tools:with-attributes >
+				<munit-tools:with-attribute whereValue="Exists Template in OS" attributeName="doc:name" />
+			</munit-tools:with-attributes>
+			<munit-tools:then-return >
+				<munit-tools:payload value="#[true]" />
+			</munit-tools:then-return>
+		</munit-tools:mock-when>
+		<munit-tools:mock-when doc:name="Retrieve template by name" doc:id="0deec1e4-2ea9-451e-92fa-ec776042b6a7" processor="os:retrieve">
+			<munit-tools:with-attributes >
+				<munit-tools:with-attribute whereValue="Retrieve template by name" attributeName="doc:name" />
+			</munit-tools:with-attributes>
+			<munit-tools:then-return >
+				<munit-tools:payload value="#[modules::GetTemplateNameTest::responseOS]" />
+			</munit-tools:then-return>
+		
+</munit-tools:mock-when>
+	</munit:before-test>
+	<munit:test name="get-template-name-success-test" doc:id="01f65051-9e27-4aaa-aa83-3c7afce82de2" >
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="fb1fb1a9-462d-4ebb-b91d-9e243587313f" >
+				<munit:attributes value='#[{"uriParams":{"name":"temp01"}}]' />
+			</munit:set-event>
+			<flow-ref doc:name="Retrieve Template" doc:id="a980f813-e30f-43b2-bc4f-8c96a9c74b4b" name="get:\template\(name):main-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Valid Response" doc:id="5e670022-0d8b-4c7d-b591-23df3f68e553" >
+				<munit-tools:that ><![CDATA[#[import * from dw::test::Asserts 
+ ---
+payload must equalTo(modules::GetTemplateNameTest::responseFlow)]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="get-template-name-error-template-not-exists-test" doc:id="05011a68-2819-4f5b-bf8a-c5c129f5e579" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Exists Template in OS" doc:id="df7c5cb7-858c-4a24-be65-d27a6d051659" processor="os:contains">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Exists Template in OS" attributeName="doc:name" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="VALIDATION:INVALID_BOOLEAN" />
+				</munit-tools:then-return>
+			
+</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<try doc:name="Try" doc:id="ed962d47-d6c0-4fea-a75c-120096877701" >
+				<flow-ref doc:name="Retrieve Template" doc:id="b4b8630a-ed59-48fd-8666-8b5821ff90ce" name="get:\template\(name):main-config" />
+			</try>
+		
+</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Valid Response" doc:id="b34867c6-d0f9-4293-a8cc-da2c43bf8cdb" >
+				<munit-tools:that ><![CDATA[#[import * from dw::test::Asserts 
+ ---
+payload must equalTo(modules::GetTemplateNameTest::errorTemplateNotExists)]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Set HTTP 404" doc:id="df03553a-aa54-49ba-8c13-b966adc06259" processor="set-variable">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Set HTTP 404" attributeName="doc:name" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		
+</munit:validation>
+	</munit:test>
+
+
+<munit:test name="get-template-name-error-os-test" doc:id="b406728a-ffbe-437d-b5e8-9ff32cdb889b" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Exists Template in OS" doc:id="acca2530-ac07-42f0-a22b-e36c6d41b15d" processor="os:contains">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Exists Template in OS" attributeName="doc:name" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="OS:STORE_NOT_AVAILABLE" />
+				</munit-tools:then-return>
+			
+</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<try doc:name="Try" doc:id="ea810f15-8000-4c22-b13b-afd3c2d7bab0" >
+				<flow-ref doc:name="Retrieve Template" doc:id="30ed24b2-dbf4-434c-b68b-09c91c5866c3" name="get:\template\(name):main-config" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="592c839c-ad85-456c-bec4-e118801ca833" type="ANY"/>
+				</error-handler>
+			</try>
+		
+</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Valid Response" doc:id="36c79493-cf57-49e1-ada8-5c428f6bf884" >
+				<munit-tools:that ><![CDATA[#[import * from dw::test::Asserts 
+ ---
+payload must equalTo(modules::GetTemplateTest::errorOSTemplate)]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+		
+</mule>
