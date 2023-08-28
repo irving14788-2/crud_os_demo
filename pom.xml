@@ -183,11 +183,10 @@
 			<classifier>mule-plugin</classifier>
 		</dependency>
 		
-		<!-- https://mvnrepository.com/artifact/org.hyperledger.fabric-chaincode-java/fabric-chaincode-shim -->
 <dependency>
-    <groupId>org.hyperledger.fabric-chaincode-java</groupId>
-    <artifactId>fabric-chaincode-shim</artifactId>
-    <version>1.4.2</version>
+	<groupId>com.github.erosb</groupId>
+	<artifactId>everit-json-schema</artifactId>
+	<version>1.14.2</version>
 </dependency>
 		
 		
