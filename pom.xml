@@ -183,12 +183,6 @@
 			<classifier>mule-plugin</classifier>
 		</dependency>
 		
-<!-- https://mvnrepository.com/artifact/com.github.everit-org.json-schema/org.everit.json.schema -->
-<dependency>
-    <groupId>com.github.everit-org.json-schema</groupId>
-    <artifactId>org.everit.json.schema</artifactId>
-    <version>1.12.2</version>
-</dependency>
 
 		
 		
@@ -198,7 +192,7 @@
 		<repository>
 			<id>anypoint-exchange-v3</id>
 			<name>Anypoint Exchange</name>
-			<url>https://maven.anypoint.mulesoft.com/api/v3/maven</url>
+			<url>https://maven.anypoint.mulesoft.com/api/v2/maven</url>
 			<layout>default</layout>
 		</repository>
 		<repository>
