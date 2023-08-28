@@ -18,7 +18,6 @@
 		<munit.version>2.3.13</munit.version>
 	</properties>
 
-	
 	<profiles>
 		<profile>
 			<id>dev</id>
@@ -30,7 +29,7 @@
 						<version>${mule.maven.plugin.version}</version>
 						<extensions>true</extensions>
 						<configuration>
-							<cloudHubDeployment>								
+							<cloudHubDeployment>
 								<applicationName>dev-demo-mule-irving-api</applicationName>
 								<environment>dev</environment>
 								<region>us-east-1</region>
@@ -56,7 +55,7 @@
 						<version>${mule.maven.plugin.version}</version>
 						<extensions>true</extensions>
 						<configuration>
-							<cloudHubDeployment>								
+							<cloudHubDeployment>
 								<applicationName>stage-demo-mule-irving-api</applicationName>
 								<environment>stage</environment>
 								<region>us-east-1</region>
@@ -64,7 +63,7 @@
 								<workerType>MICRO</workerType>
 								<properties>
 									<env>stage</env>
-									<api.id>18915400</api.id>									
+									<api.id>18915400</api.id>
 								</properties>
 							</cloudHubDeployment>
 						</configuration>
@@ -103,6 +102,29 @@
 							<anypoint.platform.analytics_base_uri>https://analytics-ingest.anypoint.mulesoft.com</anypoint.platform.analytics_base_uri>
 						</properties>
 					</cloudHubDeployment>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.mulesoft.munit.tools</groupId>
+				<artifactId>munit-maven-plugin</artifactId>
+				<version>${munit.version}</version>
+				<executions>
+					<execution>
+						<id>test</id>
+						<phase>test</phase>
+						<goals>
+							<goal>test</goal>
+							<goal>coverage-report</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<coverage>
+						<runCoverage>true</runCoverage>
+						<formats>
+							<format>html</format>
+						</formats>
+					</coverage>
 				</configuration>
 			</plugin>
 		</plugins>

@@ -10,5 +10,6 @@ http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/m
 	<os:object-store name="Template_OS" doc:name="Object store" doc:id="e6096ecf-4175-4dfd-b884-861bfbae1f13" config-ref="Template_OS_Config" />
 	<configuration-properties doc:name="Configuration properties" doc:id="ee2b19d8-6290-4156-a6aa-8ae136eeeeb7" file="config/${env}-properties.yaml" />
 	<api-gateway:autodiscovery apiId="${api.id}" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="11ecf037-1436-4e11-a94f-9eb38e9be807" flowRef="demo-flow" />
+	<global-property doc:name="Global Property" doc:id="9c283645-4d5a-44ef-a764-8ceab22619d2" name="env" value="dev" />
 
 </mule>
