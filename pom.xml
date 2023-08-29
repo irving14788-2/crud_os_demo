@@ -181,6 +181,12 @@
 			<artifactId>mule-apikit-module</artifactId>
 			<version>1.6.1</version>
 			<classifier>mule-plugin</classifier>
+			<exclusions>
+        <exclusion>
+            <groupId>com.github.everit-org.json-schema</groupId>
+            <artifactId>org.everit.json.schema</artifactId>
+        </exclusion>
+    </exclusions>
 		</dependency>
 		
 
