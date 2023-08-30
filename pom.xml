@@ -130,6 +130,8 @@
 					</coverage>
 				</configuration>
 			</plugin>
+
+			
 		</plugins>
 	</build>
 
@@ -183,7 +185,7 @@
 			<artifactId>mule-apikit-module</artifactId>
 			<version>1.6.1</version>
 			<classifier>mule-plugin</classifier>
-			
+
 		</dependency>
 
 
