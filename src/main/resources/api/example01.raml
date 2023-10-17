@@ -1,18 +1,24 @@
 #%RAML 1.0
 title: Test application
 
+version: v1
+
 mediaType: application/json
 
 protocols:
   - HTTPS
 
+uses:
+  common-header-lib: exchange_modules/38b88b8a-53ee-4061-bc69-6bfda665629c/common-header-library/1.0.0/common-header-library.raml
 
-version: v1
-
+traits:
+  client-id-policy: !include exchange_modules/38b88b8a-53ee-4061-bc69-6bfda665629c/client-id-enforcement-trait/1.0.3/client-id-enforcement-trait.raml
+  default-headers:
+    is:
+    - client-id-policy
+    - common-header-lib.x-correlation-id
  
 types:
-  post-electronic-transfer-request-type: !include data-types/post-electronic-transfer-request-type.raml
-  post-electronic-transfer-response-type: !include data-types/post-electronic-transfer-response-type.raml
   get-template-response-type: !include data-types/get-template-response-type.raml
   put-template-request-type: !include data-types/put-template-request-type.raml
   common-error-response-type: !include data-types/common-error-response-type.raml
@@ -22,6 +28,7 @@ types:
   get:
     displayName: Get all template
     description: Get all template
+    is: [default-headers]
     responses:
       200:
         body:
@@ -38,6 +45,7 @@ types:
   put:
     displayName: Update template
     description: Upsert template in object store
+    is: [default-headers]
     body:
       application/json:
         type: put-template-request-type
@@ -55,6 +63,7 @@ types:
     get:
       displayName: Get template
       description: Get template
+      is: [default-headers]
       responses:
         200:
           body:
@@ -75,6 +84,7 @@ types:
     delete:
       displayName: Delete template
       description: Delete template in object store
+      is: [default-headers]
       responses:
         204:
           description: No Content

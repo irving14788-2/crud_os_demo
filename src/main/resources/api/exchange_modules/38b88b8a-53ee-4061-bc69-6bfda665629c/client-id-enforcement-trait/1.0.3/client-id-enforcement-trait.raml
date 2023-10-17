@@ -1,0 +1,21 @@
+#%RAML 1.0 Trait
+headers:
+  client_id:
+    type: string
+    required: true
+    maxLength: 50
+    minLength: 1
+    displayName: Client ID
+    example: 123654-987
+  client_secret:
+    type: string
+    required: true
+    maxLength: 50
+    minLength: 1
+    displayName: Client Secret
+    example: 123654-987
+responses:
+  401:
+    description: Unauthorized or invalid client application credentials
+  500:
+    description: Bad response from authorization server, or WSDL SOAP Fault error

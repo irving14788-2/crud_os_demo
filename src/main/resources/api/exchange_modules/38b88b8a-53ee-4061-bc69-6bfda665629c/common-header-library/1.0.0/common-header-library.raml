@@ -1,0 +1,27 @@
+#%RAML 1.0 Library
+
+traits:
+  x-correlation-id:
+    headers:
+      x-correlation-id:
+        required: true
+        type: string
+        maxLength: 50
+        minLength: 1
+        displayName: Correlation ID
+        example: 7e4a4756-0264-11eb-adc1-0242ac120002
+    responses:
+      400:
+        description: x-correlation-id is mandatory
+
+  current-username:
+    headers:
+      current-username:
+        required: true
+        type: string
+        minLength: 1
+        displayName: Current username 
+        example: test1
+    responses:
+      400:
+        description: allowed-child-users is mandatory
