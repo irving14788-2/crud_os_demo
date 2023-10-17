@@ -32,7 +32,7 @@
 						<extensions>true</extensions>
 						<configuration>
 							<cloudHubDeployment>
-								<applicationName>dev-demo-mule-api</applicationName>
+								<applicationName>dev-ejemplo-api</applicationName>
 								<environment>dev</environment>
 								<region>us-east-1</region>
 								<workers>1</workers>
@@ -58,7 +58,7 @@
 						<extensions>true</extensions>
 						<configuration>
 							<cloudHubDeployment>
-								<applicationName>stage-demo-mule-irving-api</applicationName>
+								<applicationName>stage-ejemplo-api</applicationName>
 								<environment>stage</environment>
 								<region>us-east-1</region>
 								<workers>1</workers>
