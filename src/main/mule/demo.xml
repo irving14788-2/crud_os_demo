@@ -9,7 +9,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 	 <http:listener-config name="logi-experience-api-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="8081" />
     </http:listener-config>
-    <apikit:config name="logi-experience-api-config" api="example01.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <apikit:config name="main-config" api="example01.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <flow name="demo-flow">
         <http:listener config-ref="logi-experience-api-httpListenerConfig" path="/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
@@ -21,7 +21,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
             </http:error-response>
         </http:listener>
        
-        <apikit:router config-ref="logi-experience-api-config" />
+        <apikit:router config-ref="main-config" />
 		<error-handler>
             <on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="80de3670-354c-405f-bacf-9f21f1fcb559">
 				<logger level="INFO" doc:name="Logger" doc:id="ae8e4127-8fcd-4d22-8f41-71093ca078af" />
